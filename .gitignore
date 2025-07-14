@@ -38,4 +38,4 @@ docker-compose.override.yml
 *.swp
 *~
 */.Exercise_Files/
-**/notes.md
+**/*notes.md
