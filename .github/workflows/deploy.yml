@@ -1,8 +1,7 @@
 name: Deploy Workflow v1
 
-on:
+on: 
   push:
-    branches: [main, develop, stage, feature/*]
   pull_request:
     branches: [main]
 
