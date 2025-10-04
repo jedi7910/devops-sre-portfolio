@@ -1,5 +1,6 @@
 package org.devops.jenkins
 
+// Serializable class to gather hosts from an Ansible inventory (needed for Jenkins to save state)
 class HostGatherer implements Serializable {
     
     def steps
@@ -7,7 +8,7 @@ class HostGatherer implements Serializable {
     HostGatherer(steps) {
         this.steps = steps
     }
-    
+
     List<String> getHosts(String inventoryPath, String groupName, Closure environmentWrapper) {
         // Define the ansible command as a closure
         def ansibleCommand = {
