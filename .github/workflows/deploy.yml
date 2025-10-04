@@ -1,0 +1,45 @@
+name: Deploy Workflow v1
+
+on:
+  push:
+    branches: [main, develop, stage, feature/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect environment
+        id: env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "environment=development" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == "refs/heads/stage" ]]; then
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/heads/feature/* ]]; then
+            echo "environment=feature" >> $GITHUB_OUTPUT
+          else
+            echo "environment=unknown" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Display detected environment
+        run: echo "Deploying to ${{ steps.env.outputs.environment }} environment"
+      
+      - name: Deploy (simulated)
+        run: |
+          if [[ "${{ steps.env.outputs.environment }}" == "unknown" ]]; then
+            echo "No deployment for unknown environment."
+            exit 1
+          else
+            echo "Deploying to ${{ steps.env.outputs.environment }} environment..."
+            # Simulate deployment steps here
+            sleep 2
+            echo "Deployment to ${{ steps.env.outputs.environment }} completed."
+          fi
+        
