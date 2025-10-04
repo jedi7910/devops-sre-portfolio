@@ -22,7 +22,7 @@ jobs:
         run: node --version
       
       - name: Run tests
-        working-directory: ./01-ci-cd-pipelines/github-actions-sample/node-app
+        working-directory: ./01-ci-cd-pipelines/github-actions-sample
         run: npm test
       
       - name: Say Hello
