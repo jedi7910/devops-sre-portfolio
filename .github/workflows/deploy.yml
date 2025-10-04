@@ -25,7 +25,9 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/heads/feature/* ]]; then
             echo "environment=feature" >> $GITHUB_OUTPUT
           else
-            echo "environment=unknown" >> $GITHUB_OUTPUT
+            echo "::error::Unsupported branch: ${{ github.ref }}"
+            echo "::error::Allowed branches are main, develop, stage, and feature/*"
+            exit 1
           fi
 
       - name: Display detected environment
