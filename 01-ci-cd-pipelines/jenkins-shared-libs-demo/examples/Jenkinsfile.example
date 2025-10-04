@@ -1,0 +1,77 @@
+@Library('my-shared-lib') _
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('Detect Environment') {
+            steps {
+                script {
+                    // Detect which environment we're in based on the Jenkins node
+                    env.CONFIG = detectEnvironment(
+                        nodePatterns: [
+                            dev: ['devnode', 'test'],
+                            prod: ['prodnode', 'prod-']
+                        ],
+                        configs: [
+                            dev: [
+                                endpoint: 'https://dev-api.example.com',
+                                credentialId: 'dev-deploy-key',
+                                deployBranch: 'develop'
+                            ],
+                            prod: [
+                                endpoint: 'https://api.example.com',
+                                credentialId: 'prod-deploy-key',
+                                deployBranch: 'main'
+                            ]
+                        ]
+                    )
+                    
+                    echo "Detected environment: ${env.CONFIG.environment}"
+                    echo "Will deploy from branch: ${env.CONFIG.deployBranch}"
+                }
+            }
+        }
+        
+        stage('Get Target Hosts') {
+            steps {
+                script {
+                    // Get list of servers to deploy to
+                    env.TARGET_HOSTS = getHostsFromInventory(
+                        inventoryPath: 'inventory/hosts.yaml',
+                        groupName: 'app_servers',
+                        environmentWrapper: { closure ->
+                            withPythonEnv('3.9') {
+                                closure()
+                            }
+                        }
+                    )
+                    
+                    echo "Will deploy to ${env.TARGET_HOSTS.size()} hosts:"
+                    env.TARGET_HOSTS.each { host ->
+                        echo "  - ${host}"
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy Application') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: env.CONFIG.credentialId, variable: 'DEPLOY_KEY')]) {
+                        env.TARGET_HOSTS.each { host ->
+                            echo "Deploying to ${host}..."
+                            sh """
+                                ansible-playbook deploy.yaml \\
+                                    -i inventory/hosts.yaml \\
+                                    --limit ${host} \\
+                                    --extra-vars "deploy_branch=${env.CONFIG.deployBranch}" \\
+                                    --extra-vars "api_endpoint=${env.CONFIG.endpoint}"
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -11,6 +11,8 @@ A collection of reusable Jenkins pipeline components for common DevOps tasks.
     - [Host Gatherer](#host-gatherer)
     - [Environment Detector](#environment-detector)
   - [Error Handling](#error-handling)
+  - [Example Usage](#example-usage)
+  - [Testing](#testing)
   - [Contributing](#contributing)
 
 ## Installation
@@ -95,6 +97,27 @@ echo "Endpoint: ${envConfig.endpoint}"
 ## Error Handling
 - Fails if code does not match any patterns
 - Fails if no configuration exists for matched environment
+
+## Example Usage
+
+See `examples/Jenkinsfile.example` for a complete pipeline that demonstrates using both components together in a deployment scenario.
+
+The example shows:
+- Detecting environment based on Jenkins node
+- Getting target hosts from Ansible inventory
+- Using environment-specific configuration for deployment
+
+
+## Testing
+
+This library includes unit tests using JUnit and Groovy. To run tests:
+```bash
+./gradlew test
+```
+Tests are located in `/test/groovy/or/devops/jenkins` and cover:
+- Host gathering with various outputs
+- Environment detection with different node patterns
+- Error handling for edge cases
 
 ## Contributing
 - Class implementation in `src/org/devops/jenkins/`

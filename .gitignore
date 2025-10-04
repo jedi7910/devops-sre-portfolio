@@ -16,6 +16,8 @@ env/
 
 # VS Code settings
 .vscode/
+.idea/
+*.iml
 
 # Terraform state files and crash logs
 *.tfstate
@@ -39,3 +41,10 @@ docker-compose.override.yml
 *~
 */.Exercise_Files/
 **/*notes.md
+
+# Gradle
+.gradle/
+build/
+gradle/
+gradlew
+gradlew.bat

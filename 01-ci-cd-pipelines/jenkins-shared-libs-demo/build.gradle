@@ -1,0 +1,35 @@
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://repo.jenkins-ci.org/public/'
+    }
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.5.17'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'com.lesfurets:jenkins-pipeline-unit:1.19'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src', 'vars']
+        }
+    }
+    test {
+        groovy {
+            srcDirs = ['test/groovy']
+        }
+    }
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
