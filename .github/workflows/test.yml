@@ -1,4 +1,4 @@
-name: My First Workflow
+name: Test Workflow v2
 
 on:
   push:
