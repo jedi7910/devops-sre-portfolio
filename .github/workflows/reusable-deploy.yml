@@ -1,0 +1,58 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Deployment environment (prod, stage, dev)'
+        required: true
+        type: string
+      app-name:
+        description: 'Name of the application to deploy'
+        required: true
+        type: string
+    secrets:
+      deploy-token:
+        description: 'Token for deployment authentication'
+        required: true
+    outputs:
+      deployment-url:
+        description: 'The URL of the deployed application'
+        value: ${{ jobs.deploy.outputs.deployment-url }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-url: ${{ steps.deploy-info.outputs.deployment-url }}
+    
+    steps:
+    - name: Validate Environment
+      run: |
+        VALID_ENVS=("prod" "stage" "dev")
+        if [[ ! " ${VALID_ENVS[@]} " =~ " ${{ inputs.environment }} " ]]; then
+          echo "::error::Invalid environment: ${{ inputs.environment }}"
+          echo "::error::Allowed environments: ${VALID_ENVS[*]}"
+          exit 1
+        fi
+        echo "✅ Environment validation passed"
+    
+    - name: Set deployment URL
+      id: deploy-info
+      run: |
+        if [[ "${{ inputs.environment }}" == "prod" ]]; then
+          echo "deployment-url=https://${{ inputs.app-name }}.example.com" >> $GITHUB_OUTPUT
+        elif [[ "${{ inputs.environment }}" == "stage" ]]; then
+          echo "deployment-url=https://stage-${{ inputs.app-name }}.example.com" >> $GITHUB_OUTPUT
+        else
+          echo "deployment-url=https://dev-${{ inputs.app-name }}.example.com" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Deploy Application
+      env:
+        DEPLOY_TOKEN: ${{ secrets.deploy-token }}
+      run: |
+        echo "🚀 Deploying ${{ inputs.app-name }} to ${{ inputs.environment }}"
+        echo "📍 Target URL: ${{ steps.deploy-info.outputs.deployment-url }}"
+        echo "🔑 Using token: ${DEPLOY_TOKEN:0:5}***"
+        echo "✅ Deployment simulated successfully"

@@ -1,5 +1,4 @@
-name: Use Reusable Workflow
-
+name: Build and Deploy Pipeline
 on: 
     pull_request:
       branches: [ main ]
@@ -13,11 +12,36 @@ jobs:
     with:
       node-version: '20'
       run-tests: true
-  
+
+  set-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+    steps:
+      - name: Determine environment
+        id: set-env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "environment=prod >> $GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "environment=development" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+  deploy:
+    needs: [build, set-environment]
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: ${{ needs.set-environment.outputs.environment }}
+      app-name: 'my-app'
+    secrets:
+      deploy-token: ${{ secrets.DEPLOY_TOKEN }}
+
   display-results:
-    needs: build
+    needs: [build,deploy]
     runs-on: ubuntu-latest
     steps:
-      - name: Show build time
+      - name: Show results
         run: |
-          echo "Build completed at: ${{ needs.build.outputs.build-time }}"
+          echo "✅ Build completed at: ${{ needs.build.outputs.build-time }}"
+          echo "🚀 Deployed to: ${{ needs.deploy.outputs.deployment-url }}"
