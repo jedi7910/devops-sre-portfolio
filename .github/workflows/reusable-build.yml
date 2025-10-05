@@ -1,0 +1,52 @@
+name: Reusable Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '18'
+      run-tests:
+        description: 'Whether to run tests or not'
+        required: false
+        type: boolean
+        default: true
+      working-directory:
+        description: 'Working directory for the application'
+        required: false
+        type: string
+        default: './01-ci-cd-pipelines/github-actions-sample'
+    outputs:
+      build-time:
+        description: 'Timestamp when build completed'
+        value: ${{ jobs.build.outputs.build-time }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      build-time: ${{ steps.build-info.outputs.time }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    
+    - name: Install dependencies
+      working-directory: ${{ inputs.working-directory }}
+      run: npm ci || npm install
+    
+    - name: Run tests
+      if: inputs.run-tests
+      working-directory: ${{ inputs.working-directory }}
+      run: npm test
+    
+    - name: Set build info
+      id: build-info
+      run: echo "time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
