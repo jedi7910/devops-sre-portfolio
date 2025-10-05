@@ -1,0 +1,23 @@
+name: Use Reusable Workflow
+
+on: 
+    pull_request:
+      branches: [ main ]
+      types: [ opened, synchronize, reopened ]
+    push:
+      branches: [ main ]
+
+jobs:
+  build:
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      node-version: '20'
+      run-tests: true
+  
+  display-results:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show build time
+        run: |
+          echo "Build completed at: ${{ needs.build.outputs.build-time }}"
