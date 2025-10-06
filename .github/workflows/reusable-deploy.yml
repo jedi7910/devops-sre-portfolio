@@ -22,37 +22,57 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     outputs:
       deployment-url: ${{ steps.deploy-info.outputs.deployment-url }}
-    
+
     steps:
-    - name: Validate Environment
-      run: |
-        VALID_ENVS=("prod" "stage" "dev")
-        if [[ ! " ${VALID_ENVS[@]} " =~ " ${{ inputs.environment }} " ]]; then
-          echo "::error::Invalid environment: ${{ inputs.environment }}"
-          echo "::error::Allowed environments: ${VALID_ENVS[*]}"
-          exit 1
-        fi
-        echo "✅ Environment validation passed"
-    
-    - name: Set deployment URL
-      id: deploy-info
-      run: |
-        if [[ "${{ inputs.environment }}" == "prod" ]]; then
-          echo "deployment-url=https://${{ inputs.app-name }}.example.com" >> $GITHUB_OUTPUT
-        elif [[ "${{ inputs.environment }}" == "stage" ]]; then
-          echo "deployment-url=https://stage-${{ inputs.app-name }}.example.com" >> $GITHUB_OUTPUT
-        else
-          echo "deployment-url=https://dev-${{ inputs.app-name }}.example.com" >> $GITHUB_OUTPUT
-        fi
-    
-    - name: Deploy Application
-      env:
-        DEPLOY_TOKEN: ${{ secrets.deploy-token }}
-      run: |
-        echo "🚀 Deploying ${{ inputs.app-name }} to ${{ inputs.environment }}"
-        echo "📍 Target URL: ${{ steps.deploy-info.outputs.deployment-url }}"
-        echo "🔑 Using token: ${DEPLOY_TOKEN:0:5}***"
-        echo "✅ Deployment simulated successfully"
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Display matrix info
+        shell: bash
+        run: |
+          echo "🧩 Running on ${{ matrix.os }} | Environment: ${{ inputs.environment }} | App: ${{ inputs.app-name }}"
+
+      - name: Validate Environment
+        shell: bash
+        run: |
+          VALID_ENVS=("prod" "stage" "dev")
+          ENVIRONMENT="${{ inputs.environment }}"   # assign input to bash variable
+          # Use Bash variable inside [[ ... ]] for safe evaluation
+          if [[ ! " ${VALID_ENVS[@]} " =~ " ${ENVIRONMENT} " ]]; then
+            echo "::error::Invalid environment: ${ENVIRONMENT}"
+            echo "::error::Allowed environments: ${VALID_ENVS[*]}"
+            exit 1
+          fi
+          echo "✅ Environment validation passed"
+
+      - name: Set deployment URL
+        shell: bash
+        id: deploy-info
+        run: |
+          ENVIRONMENT="${{ inputs.environment }}"
+          APP_NAME="${{ inputs.app-name }}"
+          if [[ "${ENVIRONMENT}" == "prod" ]]; then
+            echo "deployment-url=https://${APP_NAME}.example.com" >> $GITHUB_OUTPUT
+          elif [[ "${ENVIRONMENT}" == "stage" ]]; then
+            echo "deployment-url=https://stage-${APP_NAME}.example.com" >> $GITHUB_OUTPUT
+          else
+            echo "deployment-url=https://dev-${APP_NAME}.example.com" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy Application
+        shell: bash
+        env:
+          DEPLOY_TOKEN: ${{ secrets.deploy-token }}
+        run: |
+          ENVIRONMENT="${{ inputs.environment }}"
+          APP_NAME="${{ inputs.app-name }}"
+          echo "🚀 Deploying ${APP_NAME} to ${ENVIRONMENT}"
+          echo "📍 Target URL: ${{ steps.deploy-info.outputs.deployment-url }}"
+          echo "🔑 Using token: ${DEPLOY_TOKEN:0:5}***"
+          echo "✅ Deployment simulated successfully"
