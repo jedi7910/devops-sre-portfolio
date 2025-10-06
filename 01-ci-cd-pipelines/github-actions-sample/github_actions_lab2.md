@@ -428,13 +428,13 @@ jobs:
 
 ## Verification Checklist
 
-- [ ] Created `reusable-build.yml`
-- [ ] Created `reusable-deploy.yml`
-- [ ] Created caller workflow that uses both
-- [ ] Workflows accept inputs and return outputs
-- [ ] Secrets are passed securely
-- [ ] Error handling validates inputs
-- [ ] Can explain how this is similar to Jenkins shared library
+- [x] Created `reusable-build.yml`
+- [x] Created `reusable-deploy.yml`
+- [x] Created caller workflow that uses both
+- [x] Workflows accept inputs and return outputs
+- [x] Secrets are passed securely
+- [x] Error handling validates inputs
+- [x] Can explain how this is similar to Jenkins shared library
 
 ---
 
