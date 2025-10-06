@@ -41,15 +41,13 @@ jobs:
       shell: bash
       run: |
         VALID_ENVS=("prod" "stage" "dev")
-        if [[ ! " ${VALID_ENVS[@]} " =~ " ${{ inputs.environment }} " ]]; then
-          echo "::error::Invalid environment: ${{ inputs.environment }}"
-          echo "::error::Allowed environments: ${VALID_ENVS[*]}"
-          exit 1
+        ENVIRONMENT="${{ inputs.environment }}"  # assign to bash variable
+        if [[ ! " ${VALID_ENVS[@]} " =~ " ${ENVIRONMENT} " ]]; then
+        echo "::error::Invalid environment: ${ENVIRONMENT}"
+        echo "::error::Allowed environments: ${VALID_ENVS[*]}"
+        exit 1
         fi
         echo "✅ Environment validation passed"
-
-
-    
     - name: Set deployment URL
       id: deploy-info
       run: |
