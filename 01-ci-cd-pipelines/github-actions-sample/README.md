@@ -1,68 +1,272 @@
-
 # GitHub Actions - CI/CD Workflows
 
-Project to track setting up and testing CI using Github Actions workflows
+A collection of reusable GitHub Actions workflows for automated build, test, and deployment processes. This project demonstrates modern CI/CD patterns using GitHub Actions reusable workflows - similar in concept to Jenkins shared libraries but implemented with simple, composable YAML files.
+
+## Table of Contents
+
+- [GitHub Actions - CI/CD Workflows](#github-actions---cicd-workflows)
+  - [Table of Contents](#table-of-contents)
+  - [Workflows](#workflows)
+    - [Build and Deploy Pipeline (use-reusable.yml)](#build-and-deploy-pipeline-use-reusableyml)
+  - [Reusable Workflows](#reusable-workflows)
+    - [Reusable Build (reusable-build.yml)](#reusable-build-reusable-buildyml)
+    - [Reusable Deploy (reusable-deploy.yml)](#reusable-deploy-reusable-deployyml)
+  - [Key Features](#key-features)
+    - [Environment Detection](#environment-detection)
+    - [Error Handling](#error-handling)
+    - [Reusable Components](#reusable-components)
+  - [Comparison to Jenkins](#comparison-to-jenkins)
+  - [Usage](#usage)
+    - [Main Pipeline (use-reusable.yml)](#main-pipeline-use-reusableyml)
+    - [Workflow Execution Flow](#workflow-execution-flow)
+    - [Calling Reusable Workflows](#calling-reusable-workflows)
+    - [Monitoring Workflow Runs](#monitoring-workflow-runs)
 
 ## Workflows
 
-### Test Workflow (test.yml)
+### Build and Deploy Pipeline (use-reusable.yml)
 
-Checks out code on main and feature branches, runs on ubuntu-latest, sets up Node.js and runs tests.
+The main orchestration workflow that coordinates the complete CI/CD process. This workflow demonstrates how to compose multiple reusable workflows into a complete pipeline.
 
-### Deploy Workflow (deploy.yml)  
+**Triggers:**
+- Pull requests to `main` branch
+- Direct pushes to `main` branch
 
-Runs on all branches and pull requests to main using ubuntu-latest. Detects which environment branch is being pushed or merged (develop, stage, main, feature/*) and validates it against approved branches. If the branch is invalid, the workflow fails with a clear error message. Displays the detected environment and simulates a deployment.
+**Jobs:**
+1. **Build** - Calls reusable build workflow to compile and test the application
+2. **Set Environment** - Detects target environment based on Git branch
+3. **Deploy** - Calls reusable deploy workflow with environment-specific configuration
+4. **Display Results** - Shows build time and deployment URL
+
+**Flow:**
+```
+PR/Push → Build (test) → Detect Environment → Deploy → Display Results
+```
+
+## Reusable Workflows
+
+### Reusable Build (reusable-build.yml)
+
+A reusable workflow component for building and testing Node.js applications. Can be called from any workflow in the repository.
+
+**Purpose:** Standardizes the build and test process across multiple workflows, ensuring consistency and reducing duplication.
+
+**Inputs:**
+- `node-version` (string, optional, default: '18') - Node.js version to use for building
+- `run-tests` (boolean, optional, default: true) - Whether to execute test suite
+- `working-directory` (string, optional, default: './01-ci-cd-pipelines/github-actions-sample') - Directory containing the application
+
+**Outputs:**
+- `build-time` (string) - ISO 8601 timestamp of when the build completed
+
+**Usage Example:**
+```yaml
+jobs:
+  build:
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      node-version: '20'
+      run-tests: true
+```
+
+### Reusable Deploy (reusable-deploy.yml)
+
+A reusable workflow component for deploying applications to different environments with validation and security.
+
+**Purpose:** Provides a standardized deployment process with environment validation, secret handling, and deployment URL generation.
+
+**Inputs:**
+- `environment` (string, required) - Target environment: must be 'prod', 'stage', or 'dev'
+- `app-name` (string, required) - Name of the application being deployed
+
+**Secrets:**
+- `deploy-token` (required) - Authentication token for deployment operations
+
+**Outputs:**
+- `deployment-url` (string) - URL where the application was deployed
+
+**Environment URL Mapping:**
+- `prod` → `https://app-name.example.com`
+- `stage` → `https://stage-app-name.example.com`
+- `dev` → `https://dev-app-name.example.com`
+
+**Usage Example:**
+```yaml
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: 'prod'
+      app-name: 'myapp'
+    secrets:
+      deploy-token: ${{ secrets.DEPLOY_TOKEN }}
+```
 
 ## Key Features
 
 ### Environment Detection
 
-It is important for users and developers to know if code is running in dev vs production because bad code or mishaps in a runaway script could cause a catastrophic outage in the real world.
+Automatically detects the target deployment environment based on the Git branch being built. This prevents accidental deployments to production and ensures code flows through proper promotion paths.
+
+**Branch to Environment Mapping:**
+- `main` branch → `prod` environment
+- `develop` branch → `dev` environment
+- All other branches → `stage` environment
+
+**Why This Matters:** Deploying untested code to production or running production code in development environments can cause catastrophic outages, data corruption, or security vulnerabilities. Automatic environment detection ensures code is always deployed to the appropriate environment based on the branch strategy.
 
 ### Error Handling
 
-Error handling is handled in deploy.yml by referencing github.ref based on the branch being pushed. If the detected env is not one of the allowed branches it will fail as shown here :
+The reusable deploy workflow includes strict environment validation that fails fast if an invalid environment is specified.
+
+**Validation Logic:**
 ```yaml
-- name: Detect environment
-        id: env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "environment=development" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/stage" ]]; then
-            echo "environment=staging" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/feature/* ]]; then
-            echo "environment=feature" >> $GITHUB_OUTPUT
-          else
-            echo "::error::Unsupported branch: ${{ github.ref }}"
-            echo "::error::Allowed branches are main, develop, stage, and feature/*"
-            exit 1
-          fi
+- name: Validate Environment
+  run: |
+    VALID_ENVS=("prod" "stage" "dev")
+    if [[ ! " ${VALID_ENVS[@]} " =~ " ${{ inputs.environment }} " ]]; then
+      echo "::error::Invalid environment: ${{ inputs.environment }}"
+      echo "::error::Allowed environments: ${VALID_ENVS[*]}"
+      exit 1
+    fi
+    echo "✅ Environment validation passed"
 ```
+
+**Benefits:**
+- Fails immediately with clear error message
+- Prevents deployment to misconfigured or non-existent environments
+- Uses GitHub Actions error annotations for visibility
+- Provides explicit list of allowed environments
+
+### Reusable Components
+
+This project implements the reusable workflow pattern, which is conceptually similar to Jenkins shared libraries but simpler to implement and maintain.
+
+**Key Advantages:**
+- **DRY Principle** - Write build/deploy logic once, use it everywhere
+- **Consistency** - All projects use the same tested workflows
+- **Maintainability** - Update workflow logic in one place
+- **Composability** - Combine reusable workflows to create complex pipelines
+- **Version Control** - Workflows are versioned alongside code
+
+**Comparison to Jenkins Shared Libraries:**
+- No Groovy scripting required - just YAML
+- No separate library repository needed
+- Works with GitHub's native secrets management
+- Simpler syntax and easier debugging
 
 ## Comparison to Jenkins
 
-GitHub Actions is significantly easier to work with than Jenkins:
-- **YAML vs Groovy**: Simple YAML syntax instead of complex Groovy scripting
-- **Branch-based detection**: Detects environment from Git branches vs Jenkins node names
-- **No plugin management**: Uses marketplace actions instead of maintaining Jenkins plugins
-- **Cloud-hosted**: No server infrastructure to maintain
+GitHub Actions provides significant advantages over traditional Jenkins pipelines:
 
+- **YAML vs Groovy**: Simple, declarative YAML syntax instead of complex Groovy scripting
+- **Branch-based detection**: Detects environment from Git branches instead of relying on Jenkins node name patterns
+- **No plugin management**: Uses marketplace actions instead of maintaining a fragile plugin ecosystem
+- **Cloud-hosted**: No server infrastructure to provision, patch, or maintain
+- **Reusable workflows**: Similar concept to Jenkins shared libraries but implemented as simple YAML files that can call each other
+
+**When Jenkins Still Makes Sense:**
+- On-premise deployment requirements
+- Complex enterprise integrations with legacy systems
+- Specific regulatory or compliance requirements
+- Existing large-scale Jenkins infrastructure with hundreds of jobs
 
 ## Usage
 
-Workflows are located in `.github/workflows/` and trigger automatically:
+All workflows are located in `.github/workflows/` and trigger automatically based on Git events.
 
-- **test.yml**: Runs on pushes to `main` and `feature/*` branches
-- **deploy.yml**: Runs on pushes to any branch and pull requests to `main`
+### Main Pipeline (use-reusable.yml)
 
-### What Happens:
-1. Code is checked out
-2. Environment is detected based on branch name
-3. For deploy.yml: validates branch is approved (main, develop, stage, feature/*)
-4. Runs tests or simulated deployment
-5. Displays results and detected environment
+**Triggers:**
+- Automatically on pull requests to `main`
+- Automatically on pushes to `main`
 
-No manual configuration needed - workflows run automatically on push/PR.
+**Prerequisites:**
+- Repository secret `DEPLOY_TOKEN` must be configured in Settings → Secrets and variables → Actions
 
+**What Happens:**
+1. Code is checked out from the repository
+2. Application is built using Node.js 20
+3. Test suite is executed
+4. Target environment is determined based on branch name
+5. Environment is validated against allowed list
+6. Application is deployed with appropriate configuration
+7. Build time and deployment URL are displayed
+
+**Setting Up Secrets:**
+1. Navigate to repository Settings
+2. Select "Secrets and variables" → "Actions"
+3. Click "New repository secret"
+4. Name: `DEPLOY_TOKEN`
+5. Value: Your deployment authentication token
+6. Click "Add secret"
+
+### Workflow Execution Flow
+
+```
+┌─────────────────────┐
+│   Push/PR to main   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Reusable Build    │
+│  - Setup Node.js    │
+│  - Install deps     │
+│  - Run tests        │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Detect Environment │
+│  - Check branch     │
+│  - Map to env       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Reusable Deploy    │
+│  - Validate env     │
+│  - Set URL          │
+│  - Deploy app       │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Display Results   │
+│  - Build time       │
+│  - Deployment URL   │
+└─────────────────────┘
+```
+
+### Calling Reusable Workflows
+
+To use these reusable workflows in other projects or workflows:
+
+```yaml
+jobs:
+  my-build:
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      node-version: '20'
+      run-tests: true
+      working-directory: './my-app'
+  
+  my-deploy:
+    needs: my-build
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: 'prod'
+      app-name: 'my-application'
+    secrets:
+      deploy-token: ${{ secrets.MY_DEPLOY_TOKEN }}
+```
+
+### Monitoring Workflow Runs
+
+1. Navigate to the "Actions" tab in the GitHub repository
+2. Select a workflow run to view details
+3. Click on individual jobs to see step-by-step execution logs
+4. Check outputs in the "Display Results" job for build time and deployment URL
+
+No manual configuration or intervention is required - workflows run automatically on push/PR events.
