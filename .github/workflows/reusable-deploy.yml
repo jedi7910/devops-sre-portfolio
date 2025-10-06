@@ -22,11 +22,21 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     outputs:
       deployment-url: ${{ steps.deploy-info.outputs.deployment-url }}
     
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Display matrix info
+      run: |
+        echo "🧩 Running on ${{ matrix.os }} | Environment: ${{ inputs.environment }} | App: ${{ inputs.app-name }}"
+
     - name: Validate Environment
       run: |
         VALID_ENVS=("prod" "stage" "dev")

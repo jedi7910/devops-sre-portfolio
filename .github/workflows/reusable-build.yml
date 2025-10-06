@@ -21,11 +21,19 @@ on:
     outputs:
       build-time:
         description: 'Timestamp when build completed'
-        value: ${{ jobs.build.outputs.build-time }}
+        value: ${{ jobs.build-and-test.outputs.build-time }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-test:
+    runs-on: ${{ matrix.os }} # Use matrix variable for the runner OS
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version:
+          - ${{ inputs.node-version }}
+        exclude:
+          - os: macos-latest
+            node-version: 16 # Exclude unsupported combination
     outputs:
       build-time: ${{ steps.build-info.outputs.time }}
     
@@ -36,7 +44,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ inputs.node-version }}
+        node-version: ${{ matrix.node-version }}
     
     - name: Install dependencies
       working-directory: ${{ inputs.working-directory }}
