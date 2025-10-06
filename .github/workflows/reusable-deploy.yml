@@ -38,6 +38,7 @@ jobs:
         echo "🧩 Running on ${{ matrix.os }} | Environment: ${{ inputs.environment }} | App: ${{ inputs.app-name }}"
 
     - name: Validate Environment
+      shell: bash
       run: |
         VALID_ENVS=("prod" "stage" "dev")
         if [[ ! " ${VALID_ENVS[@]} " =~ " ${{ inputs.environment }} " ]]; then
