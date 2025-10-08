@@ -1,17 +1,17 @@
 # Get lastest Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux" {
-    most_recent = true
-    owners      = ["amazon"] # Amazon
+  most_recent = true
+  owners      = ["amazon"] # Amazon
 
-    filter {
-        name = "name"
-        values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-    }
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
 
-    filter {
-        name   = "virtualization-type"
-        values = ["hvm"]
-    }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
 
 # EC2 Instances
@@ -31,7 +31,7 @@ resource "aws_instance" "main" {
   }
 
   metadata_options {
-    http_tokens                 = "required"  # Require IMDSv2
+    http_tokens                 = "required" # Require IMDSv2
     http_put_response_hop_limit = 1
   }
 
