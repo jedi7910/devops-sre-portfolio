@@ -13,6 +13,8 @@ A collection of reusable GitHub Actions workflows for automated build, test, and
     - [Reusable Deploy (reusable-deploy.yml)](#reusable-deploy-reusable-deployyml)
   - [Key Features](#key-features)
     - [Environment Detection](#environment-detection)
+  - [Matrix Testing Configuration](#matrix-testing-configuration)
+    - [Customizing Version Matrix](#customizing-version-matrix)
     - [Error Handling](#error-handling)
     - [Reusable Components](#reusable-components)
   - [Comparison to Jenkins](#comparison-to-jenkins)
@@ -52,7 +54,8 @@ A reusable workflow component for building and testing Node.js applications. Can
 **Purpose:** Standardizes the build and test process across multiple workflows, ensuring consistency and reducing duplication.
 
 **Inputs:**
-- `node-version` (string, optional, default: '18') - Node.js version to use for building
+
+- `node-versions` (string, optional, default: '["16", "18", "20"]') - Node.js versions to test (JSON array)
 - `run-tests` (boolean, optional, default: true) - Whether to execute test suite
 - `working-directory` (string, optional, default: './01-ci-cd-pipelines/github-actions-sample') - Directory containing the application
 
@@ -114,6 +117,34 @@ Automatically detects the target deployment environment based on the Git branch 
 - All other branches → `stage` environment
 
 **Why This Matters:** Deploying untested code to production or running production code in development environments can cause catastrophic outages, data corruption, or security vulnerabilities. Automatic environment detection ensures code is always deployed to the appropriate environment based on the branch strategy.
+
+## Matrix Testing Configuration
+
+The build workflow tests across multiple dimensions by default:
+- **Operating Systems:** Ubuntu, Windows, macOS
+- **Node.js Versions:** 16, 18, 20
+- **Total Jobs:** 9 parallel test runs (with exclusions: 8 actual jobs)
+
+### Customizing Version Matrix
+
+Override the default version matrix for specific projects:
+
+```yaml
+build:
+  uses: ./.github/workflows/reusable-build.yml
+  with:
+    node-versions: '["18", "20"]'  # Test only LTS versions
+    run-tests: true
+```
+
+Or use defaults to test all supported versions:
+
+```yaml
+build:
+  uses: ./.github/workflows/reusable-build.yml
+  with:
+    run-tests: true  # Tests Node 16, 18, 20 automatically
+```
 
 ### Error Handling
 

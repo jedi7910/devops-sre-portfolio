@@ -10,7 +10,7 @@ jobs:
   build:
     uses: ./.github/workflows/reusable-build.yml
     with:
-      node-version: '20'
+      node-version: '["18", "20"]'
       run-tests: true
 
   set-environment:

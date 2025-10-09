@@ -5,22 +5,26 @@
 devops-portfolio/
 ├── 01-ci-cd-pipelines/
 │   ├── github-actions-sample/     ✅ COMPLETED (Labs 1-2)
-│   └── gitlab-ci-sample/          ⬜ NEW - Phase 2B
+│   ├── matrix-builds/             ✅ COMPLETED
+│   └── gitlab-ci-sample/          ⬜ Phase 2C
 ├── 02-infra-as-code/
-│   ├── terraform/                 ⬜ Phase 3A
+│   ├── terraform/                 ✅ COMPLETED (VPC, EC2, Modules)
 │   ├── ansible/                   ⬜ Phase 3B
 │   └── cloudformation/            ⬜ Phase 3C (Optional)
 ├── 03-containers/
-│   ├── docker/                    ⬜ Phase 4A
-│   └── kubernetes/                ⬜ Phase 4B (HIGH PRIORITY)
-└── 04-automation-scripts/
-    ├── bash/                      ✅ Basic scripts done
+│   ├── docker/                    ⬜ Phase 4A - NEXT PRIORITY
+│   └── kubernetes/                ⬜ Phase 4B - HIGH PRIORITY
+├── 04-automation-scripts/
+    ├── bash/
+    │   ├── deploy.sh              ✅ COMPLETED
+    │   ├── health-check.sh        ✅ COMPLETED
+    │   └── backup.sh              ✅ COMPLETED (YOU BUILT THIS!)
     └── python/                    ⬜ Phase 5
 ```
 
 ---
 
-## **Phase 2: CI/CD Pipelines** (1-2 weeks total)
+## **Phase 2: CI/CD Pipelines**
 
 ### **Phase 2A: GitHub Actions** ✅ COMPLETED
 - [x] Reusable workflows (build, deploy, orchestration)
@@ -28,28 +32,13 @@ devops-portfolio/
 - [x] Inputs, outputs, secrets
 - [x] Environment validation
 
-### **Phase 2B: Matrix Builds (GitHub)** ⬜ NEXT - 1-2 days
-**Priority: Do this first**
+### **Phase 2B: Matrix Builds (GitHub)** ✅ COMPLETED
+- [x] Matrix strategy in test workflow
+- [x] Upload test results as artifacts from each combination
+- [x] Display matrix results in orchestration workflow
 
-Add to existing GitHub Actions workflows:
-```yaml
-strategy:
-  fail-fast: false
-  matrix:
-    os: [ubuntu-latest, windows-latest, macos-latest]
-    node-version: [16, 18, 20]
-    exclude:
-      - os: macos-latest
-        node-version: 16
-```
-
-**Deliverables:**
-- Matrix strategy in test workflow
-- Upload test results as artifacts from each combination
-- Display matrix results in orchestration workflow
-
-### **Phase 2C: GitLab CI/CD** ⬜ NEW - 2-3 days
-**Priority: Add after Terraform basics**
+### **Phase 2C: GitLab CI/CD** ⬜ RECOMMENDED - 2-3 days
+**Priority: Do this to show multi-platform expertise**
 
 Mirror your GitHub Actions structure in GitLab format.
 
@@ -178,84 +167,18 @@ deploy_production:
 
 ---
 
-## **Phase 3: Infrastructure as Code** (2-3 weeks)
+## **Phase 3: Infrastructure as Code**
 
-### **Phase 3A: Terraform** ⬜ 1-1.5 weeks
-**Priority: Do this after matrix builds**
+### **Phase 3A: Terraform** ✅ COMPLETED
+- [x] VPC Module with subnets, IGW, NAT Gateway
+- [x] EC2 instances with user data
+- [x] Security groups with dynamic blocks
+- [x] IAM roles and instance profiles
+- [x] Modular structure
+- [x] Variables, outputs, tags
+- [x] Remote state (S3 backend)
 
-**Days 1-2: VPC Module**
-- Create modular structure (`modules/vpc/`)
-- VPC, subnets (public/private), IGW, NAT Gateway
-- Route tables and associations
-- Variables, outputs, tags
-
-**Days 3-4: EC2 & Security Modules**
-- EC2 instances with user data
-- Security groups with dynamic blocks
-- IAM roles and instance profiles
-- EBS volumes and snapshots
-
-**Days 5-6: Root Configuration**
-- Compose modules in `main.tf`
-- Use `terraform.tfvars` for environments
-- Remote state (S3 backend)
-- Outputs for other tools
-
-**Day 7: CI/CD Integration**
-- GitHub Actions workflow for Terraform
-- `terraform plan` on PRs
-- `terraform apply` on merge to main
-- State locking with DynamoDB
-
-**Example Workflow:**
-```yaml
-name: Terraform
-
-on:
-  pull_request:
-    paths:
-      - 'terraform/**'
-  push:
-    branches:
-      - main
-    paths:
-      - 'terraform/**'
-
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./terraform
-        
-      - name: Terraform Format
-        run: terraform fmt -check
-        working-directory: ./terraform
-        
-      - name: Terraform Validate
-        run: terraform validate
-        working-directory: ./terraform
-        
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
-        working-directory: ./terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
-        working-directory: ./terraform
-```
-
-### **Phase 3B: Ansible** ⬜ 3-4 days
+### **Phase 3B: Ansible** ⬜ RECOMMENDED - 3-4 days
 **You have experience here, so this is reinforcement**
 
 - Inventory management (dynamic inventory from Terraform outputs)
@@ -285,9 +208,10 @@ resource "local_file" "ansible_inventory" {
 ---
 
 ## **Phase 4: Containers & Orchestration** (2-3 weeks)
+**🔥 HIGHEST PRIORITY - Start here next**
 
-### **Phase 4A: Docker** ⬜ 2-3 days
-**Priority: After Terraform**
+### **Phase 4A: Docker** ⬜ NEXT - 2-3 days
+**Priority: Start immediately**
 
 **Multi-stage Dockerfiles:**
 - Node.js app (dependencies → build → production)
@@ -307,8 +231,8 @@ resource "local_file" "ansible_inventory" {
 - Push to GitLab Container Registry
 - Scan images with Trivy
 
-### **Phase 4B: Kubernetes** ⬜ 1-1.5 weeks
-**HIGH PRIORITY - Most requested skill**
+### **Phase 4B: Kubernetes** ⬜ CRITICAL - 1-1.5 weeks
+**🎯 MOST REQUESTED SKILL IN JOB MARKET**
 
 **Days 1-2: Core Resources**
 - Deployments (rolling updates, replicas)
@@ -385,9 +309,12 @@ deploy_k8s:
 
 ---
 
-## **Phase 5: Automation Scripts** (1 week)
+## **Phase 5: Automation Scripts**
 
-### **5A: Advanced Bash Scripts** ⬜ 2-3 days
+### **5A: Advanced Bash Scripts** ⚠️ NEEDS ENHANCEMENT - 2-3 days
+**Current: Basic scripts exist but need leveling up**
+
+**Enhancement needed:**
 - Deployment script with rollback capability
 - Error handling and logging
 - Retry logic
@@ -419,94 +346,81 @@ deploy_k8s:
 
 ---
 
-## **Recommended Execution Order**
+## **🎯 YOUR IMMEDIATE NEXT STEPS**
 
-### **Week 1:**
-1. Matrix builds (GitHub) - 1 day
-2. Terraform VPC + EC2 modules - 4 days
-3. Terraform in CI/CD - 1 day
+### **This Week (Choose One):**
 
-### **Week 2:**
-4. Docker multi-stage builds - 2 days
-5. GitLab CI/CD pipeline - 2-3 days
+**Option A: Quick Script Enhancement (2-3 hours) + Docker**
+1. Level up bash scripts TODAY (deploy.sh, health-check.sh, backup.sh)
+2. Start Docker multi-stage builds
+3. Docker Compose stack
+4. By end of week: Docker in CI/CD pipeline
 
-### **Week 3-4:**
-6. Kubernetes core resources - 3 days
-7. Kubernetes advanced + Helm - 3 days
-8. K8s deployment pipelines (GitHub + GitLab) - 2 days
+**Option B: Docker → Kubernetes Sprint (Most Impactful)**
+1. Skip script enhancement for now
+2. Docker multi-stage builds (2 days)
+3. Kubernetes core + advanced (5-7 days)
+4. Come back to scripts later
 
-### **Week 5:**
-9. Ansible + Terraform integration - 2 days
-10. Python automation scripts - 2 days
-11. Polish and document everything - 2 days
+### **Recommended: Option B**
+**Reasoning:** 
+- Kubernetes is #1 most-requested skill
+- You already have working Terraform + GitHub Actions
+- Docker + K8s will make the biggest portfolio impact
+- Scripts can be polished alongside K8s work
 
 ---
 
-## **Portfolio Presentation Tips**
+## **Updated Timeline**
 
-### **README.md Structure:**
-```markdown
-# DevOps Portfolio
+### **Week 1-2: Docker + Kubernetes**
+- Days 1-2: Docker multi-stage, Compose, CI/CD integration
+- Days 3-4: K8s Deployments, Services, ConfigMaps
+- Days 5-6: K8s Ingress, HPA, PersistentVolumes
+- Days 7-9: Helm charts + K8s CI/CD pipelines
 
-## Skills Demonstrated
-- ✅ CI/CD: GitHub Actions, GitLab CI/CD
-- ✅ IaC: Terraform, Ansible
-- ✅ Containers: Docker, Kubernetes, Helm
-- ✅ Cloud: AWS (EC2, S3, VPC)
-- ✅ Automation: Bash, Python
+### **Week 3: GitLab + Polish**
+- Days 1-3: GitLab CI/CD pipeline (mirror GitHub setup)
+- Days 4-5: Enhance bash scripts + Python automation
+- Days 6-7: Documentation, README updates
 
-## Projects
+### **Optional Week 4:**
+- Ansible + Terraform integration
+- Monitoring setup
+- Portfolio presentation polish
 
-### 1. Multi-Platform CI/CD Pipelines
-- GitHub Actions with reusable workflows and matrix builds
-- GitLab CI/CD with templates and parallel execution
-- Automated testing, building, and deployment
+---
 
-### 2. Infrastructure as Code
-- Modular Terraform for AWS (VPC, EC2, Security Groups)
-- Ansible playbooks for configuration management
-- Terraform + Ansible integration
+## **Current Portfolio Strength**
 
-### 3. Container Orchestration
-- Production-ready Kubernetes manifests
-- Helm charts for multiple environments
-- Automated deployments from CI/CD
+### ✅ **What You Have:**
+- GitHub Actions with reusable workflows ✅
+- Matrix builds ✅
+- Terraform (modular, AWS) ✅
+- Basic scripting ⚠️
 
-### 4. Automation Scripts
-- Deployment scripts with rollback capability
-- Cloud resource management with Python
-- Cost optimization and monitoring
-```
+### ⬜ **Critical Gaps:**
+- Docker containerization
+- Kubernetes orchestration (MOST IMPORTANT)
+- GitLab CI/CD (multi-platform proof)
+- Advanced automation scripts
 
-### **What Employers Want to See:**
-1. **Both GitHub and GitLab** - Shows adaptability
-2. **Terraform** - Universal IaC skill
-3. **Kubernetes** - Most in-demand container orchestration
-4. **Working examples** - Not just code, but documented workflows
-5. **Integration** - How tools work together
-6. **Best practices** - Security, testing, monitoring
+### **Market Readiness: 60%**
+**After Docker + K8s: 85%**
+**After GitLab + Scripts: 95%**
 
 ---
 
 ## **Job Market Alignment**
 
 **Most Requested Skills (in order):**
-1. Kubernetes ⭐⭐⭐⭐⭐
-2. Terraform ⭐⭐⭐⭐⭐
-3. Docker ⭐⭐⭐⭐⭐
-4. CI/CD (GitHub Actions, GitLab, Jenkins) ⭐⭐⭐⭐
-5. AWS/Azure/GCP ⭐⭐⭐⭐
-6. Python/Bash scripting ⭐⭐⭐
-7. Ansible ⭐⭐⭐
-8. Monitoring (Prometheus, Grafana) ⭐⭐⭐
+1. Kubernetes ⭐⭐⭐⭐⭐ - **Missing**
+2. Terraform ⭐⭐⭐⭐⭐ - **✅ Have**
+3. Docker ⭐⭐⭐⭐⭐ - **Missing**
+4. CI/CD (GitHub Actions, GitLab, Jenkins) ⭐⭐⭐⭐ - **✅ Partial (GitHub only)**
+5. AWS/Azure/GCP ⭐⭐⭐⭐ - **✅ Have (Terraform)**
+6. Python/Bash scripting ⭐⭐⭐ - **⚠️ Basic**
+7. Ansible ⭐⭐⭐ - **⬜ Missing**
+8. Monitoring (Prometheus, Grafana) ⭐⭐⭐ - **⬜ Optional**
 
-**Your Portfolio After This Roadmap:**
-- ✅ All top 7 skills covered
-- ✅ Enterprise stack (GitLab + Terraform + Kubernetes)
-- ✅ Startup stack (GitHub + Docker + AWS)
-- ✅ Real integration examples
-- ✅ Security and best practices
-
-**Estimated Timeline:** 4-5 weeks of focused work
-
-**Result:** A portfolio that demonstrates enterprise-level DevOps skills across the most in-demand tools and platforms.
+**Next milestone: Add Docker + K8s = 5/8 top skills complete**
