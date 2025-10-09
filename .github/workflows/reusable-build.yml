@@ -7,7 +7,7 @@ on:
         description: 'Node.js version to use'
         required: false
         type: string
-        default: '18'
+        default: '[16, 18, 20]'
       run-tests:
         description: 'Whether to run tests or not'
         required: false
@@ -30,7 +30,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version:
-          - ${{ inputs.node-version }}
+          - ${{ fromJson(inputs.node-version) }}
         exclude:
           - os: macos-latest
             node-version: 16 # Exclude unsupported combination
