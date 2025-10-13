@@ -1,3 +1,8 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+package-lock.json
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -48,3 +53,8 @@ build/
 gradle/
 gradlew
 gradlew.bat
+
+# Environment files
+.env
+.env.*
+!.env.example
