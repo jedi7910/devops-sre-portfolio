@@ -14,6 +14,7 @@ A collection of reusable Jenkins pipeline components for common DevOps tasks.
   - [Example Usage](#example-usage)
   - [Testing](#testing)
   - [Contributing](#contributing)
+  - [Comparison to GitHub Actions](#comparison-to-github-actions)
 
 ## Installation
 
@@ -123,3 +124,27 @@ Tests are located in `/test/groovy/or/devops/jenkins` and cover:
 - Class implementation in `src/org/devops/jenkins/`
 - Pipeline wrapper in `vars/`
 - Documentation in this `README`
+
+## Comparison to GitHub Actions
+
+While this Jenkins shared library provides similar reusability to GitHub Actions reusable workflows, there are key differences:
+
+| Feature | Jenkins Shared Library | GitHub Actions |
+|---------|----------------------|----------------|
+| Language | Groovy (imperative) | YAML (declarative) |
+| Reusability | Classes + vars | Workflow calls |
+| Environment Detection | Node name patterns | Branch-based |
+| Flexibility | More programmatic control | Simpler, less flexible |
+| Best For | Complex enterprise workflows | Cloud-native, simpler pipelines |
+
+**When to use Jenkins Shared Libraries:**
+- Complex logic requiring programmatic control
+- On-premise infrastructure
+- Integration with legacy systems
+- Enterprise environments with Jenkins investment
+
+**When to use GitHub Actions:**
+- Cloud-native projects
+- Open source projects
+- Simpler declarative workflows
+- Teams preferring YAML over Groovy
