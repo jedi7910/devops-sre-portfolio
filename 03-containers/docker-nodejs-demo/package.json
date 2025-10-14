@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "start": "node src/index.js",
+  "dev": "nodemon src/index.js",
+  "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +20,5 @@
   "devDependencies": {
     "jest": "^30.2.0",
     "nodemon": "^3.1.10"
-  },
-  "resolutions": {
-    "cross-spawn": "7.0.6"
   }
 }
