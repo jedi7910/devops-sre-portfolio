@@ -1,7 +1,7 @@
 # =============================================================================
 # Stage 1: Dependencies
 # =============================================================================
-FROM node:20-alpine AS dependencies
+FROM node:22-alpine AS dependencies
 
 # Install dependencies for native modules
 RUN apk add --no-cache python3 make g++
@@ -30,7 +30,7 @@ COPY . .
 # =============================================================================
 # Stage 3: Production
 # =============================================================================
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
