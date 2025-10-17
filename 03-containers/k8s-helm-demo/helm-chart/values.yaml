@@ -1,0 +1,112 @@
+# Default values for nodejs-demo
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 3
+
+image:
+  repository: ghcr.io/jedi7910/devops-sre-portfolio/docker-nodejs-demo
+  pullPolicy: Always
+  tag: "main-c599074"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: nodejs-demo.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+
+# Application configuration
+env:
+  nodeEnv: production
+  port: "3000"
+  logLevel: info
+
+# Database configuration
+database:
+  host: postgres-service
+  port: "5432"
+  name: myapp
+
+# Redis configuration  
+redis:
+  host: redis-service
+  port: "6379"
+
+# Secrets
+secrets:
+  dbUser: appuser
+  dbPassword: changeme_in_production
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "15-alpine"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# Redis configuration
+redisCache:
+  enabled: true
+  image:
+    repository: redis
+    tag: "7-alpine"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+# Health checks
+probes:
+  liveness:
+    enabled: true
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    enabled: true
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 5
+  startup:
+    enabled: true
+    path: /health
+    failureThreshold: 30
+    periodSeconds: 5
