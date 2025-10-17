@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app-service
+  namespace: nodejs-demo
+  labels:
+    app: nodejs-app
+spec:
+  type: ClusterIP
+  selector:
+    app: nodejs-app  # Routes to pods with this label!
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80        # Service listens on port 80
+    targetPort: 3000  # Forwards to container port 3000
