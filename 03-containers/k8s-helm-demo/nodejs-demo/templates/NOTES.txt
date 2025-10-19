@@ -1,0 +1,27 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Your Node.js application has been deployed.
+
+To access your application:
+
+{{- if .Values.ingress.enabled }}
+1. Make sure Minikube tunnel is running:
+   minikube tunnel
+
+2. Access your application:
+   http://{{ (index .Values.ingress.hosts 0).host }}
+
+3. Check health:
+   curl http://{{ (index .Values.ingress.hosts 0).host }}/health
+{{- else }}
+1. Get the application URL by running:
+   minikube service {{ include "nodejs-demo.fullname" . }}-service --url
+
+2. Access your application:
+   curl $(minikube service {{ include "nodejs-demo.fullname" . }}-service --url)
+{{- end }}
+
+To check the status of your deployment:
+  kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/instance={{ .Release.Name }}"
+
+Happy helming!

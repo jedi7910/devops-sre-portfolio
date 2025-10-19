@@ -1,0 +1,74 @@
+# Production environment overrides
+# Higher resources, stricter settings, real domains
+
+# More replicas for HA
+replicaCount: 5
+
+image:
+  tag: "v1.0.0"  # Use specific version tags in prod
+  pullPolicy: IfNotPresent  # Cache images
+
+# Production-grade resources
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Production environment variables
+env:
+  nodeEnv: production
+  logLevel: warn  # Less verbose logging
+
+# Enable autoscaling in prod
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 80
+
+# Production ingress with TLS
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+  hosts:
+    - host: nodejs-demo.production.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nodejs-demo-prod-tls
+      hosts:
+        - nodejs-demo.production.com
+
+# Production-grade databases
+postgresql:
+  enabled: true
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+redisCache:
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+# Production secrets (would use external secret management in real prod)
+secrets:
+  dbUser: prod_user
+  dbPassword: CHANGE_ME_USE_VAULT_IN_PROD
