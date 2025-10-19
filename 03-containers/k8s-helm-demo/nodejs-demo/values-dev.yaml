@@ -1,0 +1,50 @@
+# Development environment overrides
+
+replicaCount: 1
+
+image:
+  tag: "main-c599074"  # Use actual tag (for demo)
+  pullPolicy: Always
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+
+env:
+  nodeEnv: development
+  logLevel: debug
+
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: true
+  hosts:
+    - host: nodejs-demo-dev.local
+      paths:
+        - path: /
+          pathType: Prefix
+
+postgresql:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+redisCache:
+  enabled: true
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
