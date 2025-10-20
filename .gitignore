@@ -58,3 +58,6 @@ gradlew.bat
 .env
 .env.*
 !.env.example
+
+# Document Files not needed
+docs/

@@ -392,6 +392,5 @@ MIT License - See LICENSE file for details
 
 **Built with:** Kubernetes, Helm, Docker, Node.js, PostgreSQL, Redis
 
-**Author:** Kevin Howard  
+**Author:** Kenneth Howard  
 **Portfolio:** [github.com/jedi7910/devops-sre-portfolio](https://github.com/jedi7910/devops-sre-portfolio)
-EOF
