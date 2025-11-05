@@ -1,6 +1,3 @@
-cd ~/devops-sre-portfolio/03-containers
-
-cat > README.md << 'EOF'
 # Container Orchestration Projects
 
 This section demonstrates container expertise from Docker fundamentals through production Kubernetes deployments with Helm.

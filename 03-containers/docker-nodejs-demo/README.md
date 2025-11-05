@@ -14,7 +14,7 @@ Multi-stage Docker build demonstrating containerization best practices.
 
 ## Quick Start
 
-\`\`\`bash
+```bash
 # Clone and navigate
 cd 03-containers/docker-nodejs-demo
 
@@ -29,11 +29,11 @@ curl http://localhost:3000/users
 
 # Stop
 docker-compose down
-\`\`\`
+```
 
 ## Architecture
 
-\`\`\`
+```
 ┌─────────────┐
 │   Node.js   │ :3000
 │     App     │
@@ -46,7 +46,7 @@ docker-compose down
 │Postgres│ │Redis │ │     │
 │  :5432 │ │ :6379│ │ ... │
 └────────┘ └──────┘ └─────┘
-\`\`\`
+```
 
 ## Image Optimization
 
@@ -65,7 +65,7 @@ docker-compose down
 
 ## Development
 
-\`\`\`bash
+```bash
 # Install dependencies
 npm install
 
@@ -74,11 +74,11 @@ npm run dev
 
 # Run tests
 npm test
-\`\`\`
+```
 
 ## Environment Variables
 
-See \`.env.example\` for required configuration.
+See `.env.example` for required configuration.
 
 ## CI/CD
 
@@ -87,7 +87,6 @@ Automated builds on push to main:
 - Pushes to GitHub Container Registry
 - Scans for security vulnerabilities
 - Tags: branch, SHA, latest
-\`\`\`
 
 ---
 
