@@ -1,10 +1,12 @@
 # DevOps Portfolio - Kenneth Howard
 
-Production-grade DevOps projects demonstrating container orchestration, infrastructure automation, and CI/CD expertise.
+Production-grade DevOps projects demonstrating container orchestration, infrastructure automation, observability, and CI/CD expertise.
+
+---
 
 ## 👨‍💻 About
 
-Mid-level DevOps Engineer showcasing hands-on experience with modern DevOps tooling and practices. This portfolio emphasizes **production-ready implementations** rather than basic tutorials, with a focus on Kubernetes, containerization, and infrastructure as code.
+Mid-level DevOps Engineer showcasing hands-on experience with modern DevOps tooling and practices. This portfolio emphasizes **production-ready implementations** rather than basic tutorials, with a focus on Kubernetes, containerization, infrastructure as code, and observability.
 
 ---
 
@@ -15,6 +17,7 @@ Mid-level DevOps Engineer showcasing hands-on experience with modern DevOps tool
 | **Container Orchestration** | Kubernetes, Helm, Docker, Docker Compose | ⭐⭐⭐⭐⭐ |
 | **Infrastructure as Code** | Terraform, CloudFormation | ⭐⭐⭐⭐ |
 | **CI/CD** | GitHub Actions, Jenkins | ⭐⭐⭐⭐ |
+| **Observability / Monitoring** | Prometheus, Grafana, Node.js Metrics | ⭐⭐⭐⭐ |
 | **Cloud Platforms** | AWS (via Terraform) | ⭐⭐⭐ |
 | **Scripting & Automation** | Bash, Python (learning) | ⭐⭐⭐⭐ |
 | **Version Control** | Git, GitHub | ⭐⭐⭐⭐ |
@@ -26,20 +29,10 @@ Mid-level DevOps Engineer showcasing hands-on experience with modern DevOps tool
 ### 🐳 [Container Orchestration](./03-containers/)
 **Production Kubernetes deployment with Helm charts**
 
-Demonstrates full container lifecycle from optimization through production orchestration:
-
-#### Docker Multi-Stage Builds
-- Optimized Node.js application (950MB → 180MB, 81% reduction)
-- Multi-service Docker Compose stack
-- Security scanning with Trivy (8 → 0 vulnerabilities)
-- CI/CD integration with GitHub Container Registry
-
-#### Kubernetes + Helm
-- Production-ready Helm chart with 10+ templates
-- Multi-environment support (dev/prod values files)
-- Auto-scaling with HorizontalPodAutoscaler
 - Multi-service orchestration (Node.js, PostgreSQL, Redis)
-- Complete operational documentation
+- Production-ready Helm chart with dev/prod environments
+- Auto-scaling with HorizontalPodAutoscaler
+- Container optimization and security scanning
 
 **Technologies:** Docker, Kubernetes, Helm, Docker Compose, Trivy, GHCR
 
@@ -47,17 +40,30 @@ Demonstrates full container lifecycle from optimization through production orche
 
 ---
 
+### 📊 [Observability & Monitoring](./05-observability/)
+**Node.js application monitored with Prometheus and Grafana on Kubernetes**
+
+- Node.js app exposing metrics via `prom-client`
+- Prometheus scrapes metrics, Grafana visualizes:
+  - HTTP Request Rate
+  - Memory Usage
+  - App Status
+- Full Kubernetes manifests included
+- Grafana dashboard JSON included
+
+**Technologies:** Node.js, Prometheus, Grafana, Kubernetes, Docker
+
+**[View Project →](./05-observability/)**
+
+---
+
 ### 🏗️ [Infrastructure as Code](./02-infra-as-code/terraform/)
 **Modular Terraform for AWS infrastructure**
 
-Production-grade infrastructure automation with enterprise patterns:
-
-- Modular structure (VPC, EC2, Security Groups)
+- VPC, EC2, Security Groups, IAM roles
 - Remote state management (S3 + DynamoDB locking)
-- Reusable modules with input validation
-- IAM roles and instance profiles
+- Reusable modules and input validation
 - Dynamic security group rules
-- Comprehensive documentation
 
 **Technologies:** Terraform, AWS (VPC, EC2, S3, IAM), HCL
 
@@ -68,19 +74,8 @@ Production-grade infrastructure automation with enterprise patterns:
 ### 🔄 [CI/CD Pipelines](./01-ci-cd-pipelines/)
 **Enterprise-grade continuous integration and deployment**
 
-Demonstrates both modern and enterprise CI/CD patterns:
-
-#### GitHub Actions
-- Reusable workflow templates
-- Matrix builds (8 parallel jobs across 3 OS × 3 Node versions)
-- Artifact management
-- Multi-environment deployments
-
-#### Jenkins Shared Libraries
-- Custom Groovy libraries for enterprise patterns
-- Reusable pipeline components
-- Unit tested with JUnit
-- Integration with Ansible inventory
+- GitHub Actions: reusable workflows, matrix builds, artifact management
+- Jenkins Shared Libraries: reusable Groovy pipelines, unit-tested, integration with Ansible
 
 **Technologies:** GitHub Actions, Jenkins, Groovy, YAML
 
@@ -88,20 +83,15 @@ Demonstrates both modern and enterprise CI/CD patterns:
 
 ---
 
-### 🔧 [Automation Scripts](./04-automation-scripts/bash-scripts/)
+### 🔧 [Automation Scripts](./04-automation-scripts/)
 **Production-ready deployment and monitoring automation**
 
-Enterprise-grade bash scripts with proper error handling:
+- Bash scripts with error handling, logging, retry logic
+- Python utilities (in progress)
 
-- **deploy.sh** - Deployment with automatic rollback
-- **health-check.sh** - Multi-service health monitoring
-- **backup.sh** - Database backup with S3 integration
+**Technologies:** Bash, Python, AWS S3, MySQL, PostgreSQL, Redis
 
-Features: Comprehensive logging, error handling, retry logic, flexible configuration
-
-**Technologies:** Bash, AWS S3, MySQL, PostgreSQL, Redis
-
-**[View Project →](./04-automation-scripts/bash-scripts/)**
+**[View Project →](./04-automation-scripts/)**
 
 ---
 
@@ -162,19 +152,6 @@ Features: Comprehensive logging, error handling, retry logic, flexible configura
 
 ---
 
-## 📊 Project Metrics
-
-| Metric | Achievement |
-|--------|-------------|
-| **Docker Image Optimization** | 81% size reduction (950MB → 180MB) |
-| **Security Vulnerabilities** | 100% remediation (8 → 0 critical/high) |
-| **Multi-Environment Support** | Dev, staging, prod configurations |
-| **Auto-Scaling** | HPA configured (2-10 pods based on load) |
-| **CI/CD Pipeline Speed** | ~2-3 min builds (with caching) |
-| **Infrastructure Modules** | 100% reusable and parameterized |
-
----
-
 ## 🚀 Getting Started
 
 Each project includes comprehensive documentation with:
@@ -188,25 +165,6 @@ Each project includes comprehensive documentation with:
 
 ---
 
-## 📖 Learning Journey
-
-This portfolio represents a structured progression through DevOps fundamentals:
-```
-CI/CD Foundations (GitHub Actions, Jenkins)
-            ↓
-Infrastructure Automation (Terraform)
-            ↓
-Container Optimization (Docker, Compose)
-            ↓
-Production Orchestration (Kubernetes, Helm)
-            ↓
-Automation & Operations (Bash scripts)
-```
-
-Each project builds upon previous concepts while introducing production-grade patterns and best practices.
-
----
-
 ## 🎯 Portfolio Approach
 
 **Focus:** Quality over quantity
@@ -215,12 +173,7 @@ Each project builds upon previous concepts while introducing production-grade pa
 - Security and monitoring integrated from the start
 - Complete documentation and operational guides
 
-**Not Included (Yet):**
-- Monitoring/Observability stack (planned enhancement)
-- Python automation utilities (in progress)
-- Advanced AWS services (future work)
-
-**Why this approach?**  
+**Why this approach?**
 Demonstrates depth of understanding in core DevOps skills rather than superficial knowledge across many tools.
 
 ---
@@ -240,4 +193,4 @@ This portfolio is available for viewing and reference. Individual projects may h
 
 **Built with:** Kubernetes • Helm • Docker • Terraform • GitHub Actions • Jenkins • Bash • AWS
 
-**Last Updated:** January 2025
+**Last Updated:** November 2025
