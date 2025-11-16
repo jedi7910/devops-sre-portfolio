@@ -10,14 +10,14 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region # ← Removed quotes
+  region  = var.aws_region 
   profile = "iamadmin-gen"
 
   default_tags {
     tags = {
       ManagedBy   = "terraform"
       Project     = "devops-portfolio"
-      Environment = var.environment # ← Removed quotes
+      Environment = var.environment 
     }
   }
 }

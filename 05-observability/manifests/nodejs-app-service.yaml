@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitored-app
+  namespace: monitoring
+  labels:
+    app: monitored-app
+spec:
+  selector:
+    app: monitored-app
+  ports:
+  - port: 3000
+    targetPort: 3000
