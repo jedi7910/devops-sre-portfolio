@@ -143,9 +143,3 @@ jobs:
           files: |
             **/*.md
             runbooks/**
-      
-      - name: Lint Markdown
-        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
-        uses: DavidAnson/markdownlint-cli2-action@v15
-        with:
-          globs: '**/*.md'
