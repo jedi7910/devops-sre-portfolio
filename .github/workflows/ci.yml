@@ -1,0 +1,145 @@
+name: CI - Validate Infrastructure
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  validate-terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: '02-infra-as-code/terraform/**'
+      
+      - uses: hashicorp/setup-terraform@v3
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        with:
+          terraform_version: "1.5.0"
+      
+      - name: Terraform Format Check
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: |
+          cd 02-infra-as-code/terraform
+          terraform fmt -check -recursive
+      
+      - name: Terraform Validate
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: |
+          cd 02-infra-as-code/terraform
+          find . -type f -name "*.tf" -exec dirname {} \; | sort -u | while read dir; do
+            echo "Validating $dir"
+            (cd "$dir" && terraform init -backend=false && terraform validate)
+          done
+
+  # validate-ansible:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+      
+  #     - name: Get changed files
+  #       id: changed-files
+  #       uses: tj-actions/changed-files@v41
+  #       with:
+  #         files: '02-infra-as-code/ansible-cloud-demo/**'
+      
+  #     - name: Install ansible-lint
+  #       if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+  #       run: pip install ansible-lint
+      
+  #     - name: Lint Ansible playbooks
+  #       if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+  #       run: |
+  #         cd 02-infra-as-code/ansible-cloud-demo
+  #         find . -name "*.yml" -o -name "*.yaml" | xargs -r ansible-lint || true
+
+  validate-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: '04-automation-scripts/**'
+      
+      - name: Install shellcheck
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: sudo apt-get install -y shellcheck
+      
+      - name: Lint shell scripts
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: |
+          find 04-automation-scripts/bash-scripts/ -type f -name "*.sh" -exec shellcheck {} \; || true
+      
+      - name: Check Python syntax
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: |
+          find 04-automation-scripts/python-utils/ -type f -name "*.py" -exec python3 -m py_compile {} \; || true
+
+  validate-containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: '03-containers/**'
+      
+      - name: Install yamllint
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: pip install yamllint
+      
+      - name: Lint YAML files
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: |
+          find 03-containers/ -name "*.yml" -o -name "*.yaml" | xargs -r yamllint || true
+      
+      - name: Run hadolint on Dockerfiles
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: "03-containers/**/Dockerfile"
+          recursive: true
+          failure-threshold: error
+
+  validate-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: '.github/workflows/**'
+      
+      - name: Install yamllint
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: pip install yamllint
+      
+      - name: Lint workflow YAML
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
+        run: yamllint .github/workflows/*.yml || true
+
+  validate-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **/*.md
+            runbooks/**
