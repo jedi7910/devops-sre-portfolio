@@ -11,24 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v41
         with:
           files: '02-infra-as-code/terraform/**'
-      
       - uses: hashicorp/setup-terraform@v3
         if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
         with:
           terraform_version: "1.5.0"
-      
       - name: Terraform Format Check
         if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
         run: |
           cd 02-infra-as-code/terraform
-          terraform fmt -check -recursive
-      
+          terraform fmt -check -recursive      
       - name: Terraform Validate
         if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'pull_request'
         run: |

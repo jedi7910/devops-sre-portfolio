@@ -1,55 +1,71 @@
-# DevOps Portfolio - Kenneth Howard
+# Site Reliability Engineering Portfolio - Kenny Howard
 
-Production-grade DevOps projects demonstrating container orchestration, infrastructure automation, observability, and CI/CD expertise.
+Production-grade infrastructure and reliability engineering projects demonstrating Kubernetes, cloud architecture, observability, and infrastructure automation. Targeting Staff/Principal SRE roles.
 
 ---
 
 ## 👨‍💻 About
 
-Mid-level DevOps Engineer showcasing hands-on experience with modern DevOps tooling and practices. This portfolio emphasizes **production-ready implementations** rather than basic tutorials, with a focus on Kubernetes, containerization, infrastructure as code, and observability.
+Infrastructure Engineer with 10+ years of experience at IBM, specializing in bare metal, virtualization, and Kubernetes. Currently transitioning to Site Reliability Engineering with focus on Google Cloud Platform, production observability, and chaos engineering.
 
 ---
 
 ## 🎯 Core Competencies
 
-| Category | Technologies | Proficiency |
-|----------|-------------|-------------|
-| **Container Orchestration** | Kubernetes, Helm, Docker, Docker Compose | ⭐⭐⭐⭐⭐ |
-| **Infrastructure as Code** | Terraform, CloudFormation | ⭐⭐⭐⭐ |
-| **CI/CD** | GitHub Actions, Jenkins | ⭐⭐⭐⭐ |
-| **Observability / Monitoring** | Prometheus, Grafana, Node.js Metrics | ⭐⭐⭐⭐ |
-| **Cloud Platforms** | AWS (via Terraform) | ⭐⭐⭐ |
-| **Scripting & Automation** | Bash, Python (learning) | ⭐⭐⭐⭐ |
-| **Version Control** | Git, GitHub | ⭐⭐⭐⭐ |
+| Category | Technologies | Focus |
+|----------|-------------|-------|
+| **Cloud Platforms** | GCP (active), AWS | ⭐⭐⭐⭐ |
+| **Container Orchestration** | Kubernetes, GKE, Helm, Docker | ⭐⭐⭐⭐⭐ |
+| **Infrastructure as Code** | Terraform (GCP/AWS) | ⭐⭐⭐⭐ |
+| **Observability** | Prometheus, Grafana, Cloud Monitoring | ⭐⭐⭐⭐ |
+| **CI/CD** | GitHub Actions, Jenkins, Cloud Build | ⭐⭐⭐⭐ |
+| **Reliability Engineering** | SLO/SLI design, Incident Response, Chaos Engineering | ⭐⭐⭐⭐ |
+| **Systems** | Linux, Kubernetes, Bare Metal, Hypervisors | ⭐⭐⭐⭐⭐ |
 
 ---
 
-## 📁 Featured Projects
+## 🚀 Active Learning: 90-Day GCP SRE Roadmap
 
-### 🐳 [Container Orchestration](./03-containers/)
-**Production Kubernetes deployment with Helm charts**
+**Goal:** Transition to Staff/Principal SRE role within 90 days  
+**Track Progress:** [View Roadmap](./GCP-ROADMAP.md)
 
-- Multi-service orchestration (Node.js, PostgreSQL, Redis)
-- Production-ready Helm chart with dev/prod environments
-- Auto-scaling with HorizontalPodAutoscaler
-- Container optimization and security scanning
+### Completed GCP Projects
 
-**Technologies:** Docker, Kubernetes, Helm, Docker Compose, Trivy, GHCR
+#### ✅ [Week 1-2: 3-Tier Infrastructure with Load Balancer](https://github.com/jedi7910/gcp-compute-3tier)
+**Production-ready compute infrastructure on GCP**
 
-**[View Project →](./03-containers/)**
+- VPC with 3 subnets across availability zones
+- 3-tier application architecture (frontend, API, database)
+- HTTP global load balancer with health checks
+- Firewall rules and network security
+- Full Terraform automation
+
+**Technologies:** GCP (Compute Engine, VPC, Cloud Load Balancing), Terraform
+
+**Status:** ✅ Complete | **[View Repo →](https://github.com/jedi7910/gcp-compute-3tier)**
 
 ---
+
+### Upcoming GCP Projects
+
+- **Week 3-4:** GKE Migration (3-tier app to Kubernetes)
+- **Week 5-6:** Observability Stack (Cloud Monitoring + Prometheus/Grafana)
+- **Week 7-8:** Chaos Engineering & Disaster Recovery
+- **Week 9-10:** Reusable Terraform Modules & Production CI/CD
+- **Week 11-12:** Cost Optimization & Security Hardening
+- **Week 13:** Portfolio Polish & Interview Scenarios
+
+---
+
+## 📁 Foundational Projects
 
 ### 📊 [Observability & Monitoring](./05-observability/)
-**Node.js application monitored with Prometheus and Grafana on Kubernetes**
+**Node.js application with Prometheus/Grafana on Kubernetes**
 
-- Node.js app exposing metrics via `prom-client`
-- Prometheus scrapes metrics, Grafana visualizes:
-  - HTTP Request Rate
-  - Memory Usage
-  - App Status
-- Full Kubernetes manifests included
-- Grafana dashboard JSON included
+- Instrumented Node.js app with `prom-client`
+- Prometheus + Grafana deployment on Minikube
+- Custom dashboards: HTTP requests, memory, app status
+- Full troubleshooting documentation
 
 **Technologies:** Node.js, Prometheus, Grafana, Kubernetes, Docker
 
@@ -57,140 +73,121 @@ Mid-level DevOps Engineer showcasing hands-on experience with modern DevOps tool
 
 ---
 
+### 🐳 [Container Orchestration](./03-containers/)
+**Production Kubernetes deployment with Helm**
+
+- Multi-service orchestration (Node.js, PostgreSQL, Redis)
+- Helm charts with environment configurations
+- HorizontalPodAutoscaler implementation
+- Security scanning with Trivy
+
+**Technologies:** Docker, Kubernetes, Helm, Docker Compose
+
+**[View Project →](./03-containers/)**
+
+---
+
 ### 🏗️ [Infrastructure as Code](./02-infra-as-code/terraform/)
-**Modular Terraform for AWS infrastructure**
+**AWS infrastructure with Terraform**
 
-- VPC, EC2, Security Groups, IAM roles
-- Remote state management (S3 + DynamoDB locking)
-- Reusable modules and input validation
-- Dynamic security group rules
+- VPC, subnets, EC2, security groups
+- Modular structure with remote state
+- Dynamic resource configuration
 
-**Technologies:** Terraform, AWS (VPC, EC2, S3, IAM), HCL
+**Technologies:** Terraform, AWS (VPC, EC2, S3)
 
 **[View Project →](./02-infra-as-code/terraform/)**
 
 ---
 
 ### 🔄 [CI/CD Pipelines](./01-ci-cd-pipelines/)
-**Enterprise-grade continuous integration and deployment**
+**Enterprise CI/CD implementations**
 
-- GitHub Actions: reusable workflows, matrix builds, artifact management
-- Jenkins Shared Libraries: reusable Groovy pipelines, unit-tested, integration with Ansible
+- GitHub Actions: matrix builds, reusable workflows
+- Jenkins Shared Libraries: Groovy pipelines
 
-**Technologies:** GitHub Actions, Jenkins, Groovy, YAML
+**Technologies:** GitHub Actions, Jenkins, Groovy
 
 **[View Project →](./01-ci-cd-pipelines/)**
 
 ---
 
 ### 🔧 [Automation Scripts](./04-automation-scripts/)
-**Production-ready deployment and monitoring automation**
+**Operational automation**
 
-- Bash scripts with error handling, logging, retry logic
-- Python utilities (in progress)
+- Bash scripts: deployment, backups, health checks
+- Error handling and logging patterns
 
-**Technologies:** Bash, Python, AWS S3, MySQL, PostgreSQL, Redis
+**Technologies:** Bash, Python
 
 **[View Project →](./04-automation-scripts/)**
 
 ---
 
-## 🎓 Technical Highlights
+## 🎓 SRE Focus Areas
 
-### Production Thinking
-- ✅ Multi-environment configurations (dev, staging, prod)
-- ✅ Security hardening (non-root users, vulnerability scanning)
+### Reliability Engineering
+- ✅ Multi-zone/multi-region deployments
 - ✅ Health checks and monitoring integration
-- ✅ Auto-scaling and high availability
-- ✅ Error handling and rollback strategies
-- ✅ Comprehensive documentation
+- ✅ Incident response documentation
+- 🔄 SLO/SLI implementation (in progress)
+- 🔄 Chaos engineering practices (in progress)
+- 🔄 Disaster recovery automation (in progress)
 
-### DevOps Practices
+### Production Operations
 - ✅ Infrastructure as Code (GitOps-ready)
-- ✅ Immutable infrastructure patterns
-- ✅ Container optimization techniques
-- ✅ Security scanning in CI/CD pipelines
-- ✅ Multi-service orchestration
-- ✅ Automated deployment workflows
+- ✅ Container orchestration at scale
+- ✅ Observability stack implementation
+- ✅ Security hardening practices
+- 🔄 Cost optimization strategies (in progress)
+- 🔄 Capacity planning (in progress)
 
 ---
 
 ## 🛠️ Technology Stack
 
+**Cloud Platforms:**
+- Google Cloud Platform (GCP): Compute Engine, GKE, VPC, Cloud Load Balancing, Cloud Monitoring
+- AWS: EC2, VPC, S3, IAM
+
 **Container & Orchestration:**
-- Docker 24.x, Docker Compose
-- Kubernetes 1.28+, Helm 3.12+
-- Minikube (local development)
+- Kubernetes (GKE, Minikube)
+- Helm 3.12+
+- Docker & Docker Compose
 
-**Infrastructure & Cloud:**
+**Infrastructure & Automation:**
 - Terraform 1.5+
-- AWS (VPC, EC2, S3, IAM, CloudWatch)
+- GitHub Actions, Cloud Build
+- Bash, Python
 
-**CI/CD:**
-- GitHub Actions
-- Jenkins with Shared Libraries
-- GitHub Container Registry (GHCR)
+**Observability:**
+- Prometheus & Grafana
+- Cloud Monitoring & Logging
+- Custom metrics & dashboards
 
 **Languages & Tools:**
+- HCL (Terraform)
 - Bash scripting
 - Python (learning)
-- Git, GitHub
-- HCL (Terraform)
-- YAML
-
-**Application Stack:**
-- Node.js 22
-- PostgreSQL 15
-- Redis 7
-- Express.js
-
-**Security & Monitoring:**
-- Trivy (vulnerability scanning)
-- AWS CloudWatch
-- Container health checks
-- Resource monitoring
-
----
-
-## 🚀 Getting Started
-
-Each project includes comprehensive documentation with:
-- Prerequisites and installation steps
-- Architecture diagrams
-- Usage examples
-- Troubleshooting guides
-- Production considerations
-
-**Start with:** [Container Orchestration](./03-containers/) - showcases the full stack from Docker optimization through Kubernetes deployment.
-
----
-
-## 🎯 Portfolio Approach
-
-**Focus:** Quality over quantity
-- Production-ready implementations vs. basic tutorials
-- Multi-environment thinking throughout
-- Security and monitoring integrated from the start
-- Complete documentation and operational guides
-
-**Why this approach?**
-Demonstrates depth of understanding in core DevOps skills rather than superficial knowledge across many tools.
+- YAML, JSON
 
 ---
 
 ## 📬 Connect
 
 - **GitHub:** [@jedi7910](https://github.com/jedi7910)
-- **Portfolio:** [github.com/jedi7910/devops-sre-portfolio](https://github.com/jedi7910/devops-sre-portfolio)
+- **Current Role:** Infrastructure Engineer @ IBM
+- **Target:** Staff/Principal SRE (GCP-focused organizations)
 
 ---
 
-## 📄 License
+## 📄 Certifications (In Progress)
 
-This portfolio is available for viewing and reference. Individual projects may have their own licenses. See project-specific LICENSE files for details.
+- **Target:** GCP Professional Cloud DevOps Engineer (Q1 2026)
+- **Target:** GCP Associate Cloud Engineer (Q1 2026)
 
 ---
 
-**Built with:** Kubernetes • Helm • Docker • Terraform • GitHub Actions • Jenkins • Bash • AWS
+**Built with:** GCP • Kubernetes • Terraform • Prometheus • Grafana • GitHub Actions • Bash
 
-**Last Updated:** November 2025
+**Last Updated:** December 2025
