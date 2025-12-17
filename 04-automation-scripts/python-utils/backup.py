@@ -162,6 +162,28 @@ def upload_to_s3(file_path, bucket):
         logging.warning(f"S3 upload failed: {e}")
 
 # -----------------------
+# Optional: Backup to remote host
+# -----------------------
+def backup_to_remote(file_path, remote_host, remote_user=None, remote_path="~/backups"):
+    """
+    Copy a backup file to a remote host using scp.
+    """
+    if not remote_host:
+        logging.info("No remote host provided; skipping remote backup.")
+        return
+
+    scp_target = f"{remote_host}:{remote_path}"
+    if remote_user:
+        scp_target = f"{remote_user}@{scp_target}"
+
+    logging.info(f"Copying {file_path} to remote host: {scp_target}")
+    try:
+        subprocess.run(["scp", file_path, scp_target], check=True)
+        logging.info(f"Backup successfully copied to remote host: {scp_target}")
+    except subprocess.CalledProcessError as e:
+        logging.warning(f"Failed to copy backup to remote host: {e}")
+
+# -----------------------
 # Main entry point
 # -----------------------
 def main():
@@ -182,6 +204,18 @@ def main():
         verify_backup(app_file)
         if args.s3_bucket:
             upload_to_s3(app_file, args.s3_bucket)
+
+    # Optional: Remote host
+    REMOTE_HOST = os.environ.get("REMOTE_HOST")  # e.g., "10.0.0.2"
+    REMOTE_USER = os.environ.get("REMOTE_USER")  # optional, e.g., "sre"
+    REMOTE_PATH = os.environ.get("REMOTE_PATH", "~/backups")
+    for f in filter(None, [db_file, app_file]):
+        backup_to_remote(f, REMOTE_HOST, REMOTE_USER, REMOTE_PATH)
+
+    # Optional: S3 upload
+    if args.s3_bucket:
+        for f in filter(None, [db_file, app_file]):
+            upload_to_s3(f, args.s3_bucket)
 
     rotate_backups()
     logging.info("Backup process completed successfully.")
